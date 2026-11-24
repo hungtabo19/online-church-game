@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>온라인 성당 - Church Online</title>
+    <style>
+        body { margin: 0; background: #2c3e50; font-family: 'Nanum Gothic', sans-serif; }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; }
+        .btn { padding: 10px; cursor: pointer; background: #3498db; border: none; color: white; margin: 5px; }
+        #canvas-container { width: 100vw; height: 100vh; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="ui">
+        <h1>온라인 성당 (Church Online)</h1>
+        <div id="login-box">
+            <input type="text" id="username" placeholder="이름을 입력하세요">
+            <button class="btn" onclick="login()">로그인</button>
+        </div>
+        <div id="game-controls" style="display:none;">
+            <p id="welcome-msg"></p>
+            <button class="btn" onclick="talkToPriest()">신부님과 대화하기</button>
+            <button class="btn" onclick="confession()">고해성사 (죄 삭제)</button>
+        </div>
+    </div>
+    <div id="canvas-container"></div>
+
+    <script>
+        let scene, camera, renderer, user = null;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Floor
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshBasicMaterial({color: 0xecf0f1}));
+            floor.rotation.x = -Math.PI/2;
+            scene.add(floor);
+
+            // Priest (신부님)
+            const priest = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), new THREE.MeshBasicMaterial({color: 0x2c3e50}));
+            priest.position.set(0, 1, -5);
+            scene.add(priest);
+
+            camera.position.z = 5;
+            animate();
+        }
+
+        function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+
+        function login() {
+            user = document.getElementById('username').value;
+            if(user) {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('game-controls').style.display = 'block';
+                document.getElementById('welcome-msg').innerText = user + "님, 성당에 오신 것을 환영합니다.";
+            }
+        }
+
+        function talkToPriest() { alert("신부님: 하나님의 평화가 함께하기를 바랍니다."); }
+        function confession() { alert(user + "님의 죄가 사해졌습니다."); }
+
+        init();
+    </script>
+</body>
+</html>
